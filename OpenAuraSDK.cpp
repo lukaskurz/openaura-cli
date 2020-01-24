@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < controllers.size(); i++)
     {
-        controllers[i]->SetAllColorsDirect(0,120,255);
+        controllers[i]->SetAllColorsDirect(120,0,255);
         controllers[i]->SetDirect(true);
     }
 

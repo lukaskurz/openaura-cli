@@ -14,6 +14,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+#include <iostream>
 
 #include "i2c_smbus_linux.cpp"
 #include <fcntl.h>
@@ -341,10 +342,11 @@ int str_to_numbers(char* s)
     std::istringstream ss(s);
     int x;
     if (!(ss >> x)) {
-        std::cerr << "Invalid number: " << s << '\n';
-        exit(1)
+        std::cout << "Invalid number: " << s << '\n';
+        exit(1);
     } else if (!ss.eof()) {
-        std::cerr << "Trailing characters after number: " << s << '\n';
+        std::cout << "Trailing characters after number: " << s << '\n';
+        exit(1);
     }
     return x;
 }

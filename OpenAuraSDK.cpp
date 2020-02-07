@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string>
 #include <cstring>
+#include <sstream>
 
 #include "i2c_smbus_linux.cpp"
 #include <fcntl.h>
@@ -326,23 +327,67 @@ void DumpAuraRegisters(AuraController * controller)
 }   /* DumpAuraRegisters() */
 
 
+
+/******************************************************************************************\
+*                                                                                          *
+*   str_to_numbers                                                                         *
+*                                                                                          *
+*       String to Number function.  Check and convert String to number                     *
+*                                                                                          *
+\******************************************************************************************/
+
+int str_to_numbers(char* s)
+{
+    std::istringstream ss(s);
+    int x;
+    if (!(ss >> x)) {
+        std::cerr << "Invalid number: " << s << '\n';
+        exit(1)
+    } else if (!ss.eof()) {
+        std::cerr << "Trailing characters after number: " << s << '\n';
+    }
+    return x;
+}
+
+
+
+
 /******************************************************************************************\
 *                                                                                          *
 *   main                                                                                   *
 *                                                                                          *
 *       Main function.  Detects busses and Aura controllers, then opens the main window    *
+*       Takes R G B values as arguments                                                    *
 *                                                                                          *
 \******************************************************************************************/
 
 int main(int argc, char *argv[])
 {
+    //Check if there are only four arguments(including the program name at argv[0])
+    if(argc!=4)
+        exit(1);
+    
+    //convert strings to integers
+    int rgb_r = str_to_numbers(argv[1]);
+    int rgb_g = str_to_numbers(argv[2]);
+    int rgb_b = str_to_numbers(argv[3]);
+
+    //check if integers in range (0-255)
+    if(rgb_r<0||rgb_r>255)
+        exit(1);
+    if(rgb_g<0||rgb_g>255)
+        exit(1);
+    if(rgb_b<0||rgb_b>255)
+        exit(1);
+
+
     DetectI2CBusses();
 
     DetectAuraControllers();
 
     for (int i = 0; i < controllers.size(); i++)
     {
-        controllers[i]->SetAllColorsDirect(120,0,255);
+        controllers[i]->SetAllColorsDirect(rgb_r,rgb_g,rgb_b);
         controllers[i]->SetDirect(true);
     }
 
